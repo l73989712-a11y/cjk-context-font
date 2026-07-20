@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CJK Context Font</title>
+  <link rel="stylesheet" href="ui.css">
+</head>
+<body class="popup">
+  <h1>CJK Context Font</h1>
+
+  <label class="toggle-row">
+    <input id="enabled" type="checkbox">
+    <span>全局启用</span>
+  </label>
+
+  <section id="sitePanel" class="popup-site" hidden>
+    <p class="site-name" id="siteName"></p>
+    <label class="toggle-row">
+      <input id="siteEnabled" type="checkbox">
+      <span>在此网站启用</span>
+    </label>
+    <label>
+      此站纯汉字默认语言
+      <select id="siteLanguage">
+        <option value="auto">自动判断</option>
+        <option value="ja">日文</option>
+        <option value="zh-Hans">简体中文</option>
+        <option value="zh-Hant">繁体中文</option>
+        <option value="ko">韩文</option>
+      </select>
+    </label>
+    <p id="ruleCount" class="hint"></p>
+    <button id="rescan" class="secondary" type="button">重新扫描当前页面</button>
+
+    <details id="diagnosticsPanel" class="diagnostics-panel" hidden>
+      <summary>运行诊断</summary>
+      <dl class="diagnostics-grid">
+        <dt>已处理文本</dt><dd id="diagProcessed">—</dd>
+        <dt>字体应用</dt><dd id="diagApplied">—</dd>
+        <dt>DOM 变化</dt><dd id="diagMutations">—</dd>
+        <dt>Mutation 速率</dt><dd id="diagRate">—</dd>
+        <dt>扫描队列峰值</dt><dd id="diagQueue">—</dd>
+        <dt>最长扫描</dt><dd id="diagLongest">—</dd>
+        <dt>站点适配器</dt><dd id="diagAdapter">—</dd>
+        <dt>识别缓存命中</dt><dd id="diagCache">—</dd>
+        <dt>平均扫描</dt><dd id="diagAverage">—</dd>
+        <dt>生成包装节点</dt><dd id="diagWrappers">—</dd>
+      </dl>
+      <p id="diagWarning" class="diagnostic-warning" hidden></p>
+      <button id="copyDiagnostics" class="secondary" type="button">复制诊断报告</button>
+      <button id="resetDiagnostics" class="secondary" type="button">重置统计</button>
+    </details>
+  </section>
+
+  <p id="unsupported" class="hint" hidden>当前页面不允许扩展脚本运行。</p>
+  <button id="options" type="button">打开详细设置</button>
+  <script src="popup.js"></script>
+</body>
+</html>

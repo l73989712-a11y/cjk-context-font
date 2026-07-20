@@ -1,12 +1,15 @@
 {
   "name": "cjk-context-font",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": false,
   "description": "Context-aware CJK font selection browser extension",
   "scripts": {
+    "build": "python scripts/build.py",
     "check": "node scripts/check.mjs",
     "test": "node --test tests/unit/*.test.cjs",
     "test:e2e": "python tests/e2e/test_extension.py",
+    "test:extension": "python tests/e2e/test_loaded_extension.py",
+    "benchmark": "node scripts/benchmark.cjs",
     "package": "python scripts/package.py",
     "release:check": "node scripts/release_check.mjs"
   },

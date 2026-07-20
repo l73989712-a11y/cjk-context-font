@@ -1,0 +1,87 @@
+[
+  {
+    "text": "残酷な天使のテーゼ",
+    "expected": "ja",
+    "category": "kana"
+  },
+  {
+    "text": "君の名は。",
+    "expected": "ja",
+    "category": "kana"
+  },
+  {
+    "text": "ゲーム",
+    "expected": "ja",
+    "category": "katakana"
+  },
+  {
+    "text": "한국어와 漢字",
+    "expected": "ko",
+    "category": "hangul"
+  },
+  {
+    "text": "这个视频真的很好看",
+    "expected": "zh-Hans",
+    "category": "simplified"
+  },
+  {
+    "text": "這個影片真的很好看",
+    "expected": "zh-Hant",
+    "category": "traditional"
+  },
+  {
+    "text": "紅蓮華",
+    "expected": "ja",
+    "category": "acg"
+  },
+  {
+    "text": "鬼滅之刃",
+    "expected": null,
+    "category": "ambiguous-acg"
+  },
+  {
+    "text": "進撃",
+    "expected": null,
+    "category": "ambiguous-acg"
+  },
+  {
+    "text": "自然",
+    "expected": null,
+    "category": "ambiguous"
+  },
+  {
+    "text": "未来",
+    "expected": null,
+    "category": "ambiguous"
+  },
+  {
+    "text": "少女",
+    "expected": null,
+    "category": "ambiguous"
+  },
+  {
+    "text": "这个标题没有日语假名",
+    "expected": "zh-Hans",
+    "category": "negative"
+  },
+  {
+    "text": "這個標題沒有日語假名",
+    "expected": "zh-Hant",
+    "category": "negative"
+  },
+  {
+    "text": "働く人",
+    "expected": "ja",
+    "category": "japanese-han"
+  },
+  {
+    "text": "這部動畫的字幕很好",
+    "expected": "zh-Hant",
+    "category": "traditional"
+  },
+  {
+    "text": "这部动画的字幕很好",
+    "expected": "zh-Hans",
+    "category": "simplified"
+  }
+]

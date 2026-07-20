@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5.0
+
+- Introduced modular `src/` source layout and reproducible flat Chromium build.
+- Added bounded LRU classification cache and cache diagnostics.
+- Added declarative site adapter framework for Bilibili, YouTube, ChatGPT, Niconico and Wikipedia.
+- Added optional numeric-only developer diagnostics overlay.
+- Added real unpacked-extension Playwright test and benchmark script.
+- Added tag-triggered GitHub Release workflow.
+- Preserved safe DOM defaults and ruby/annotation-script protection.
+
+# Changelog
+
 ## 0.4.0
 
 - 增加全局和网站级个人词典。
