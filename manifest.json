@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "CJK Context Font",
+  "version": "0.4.0",
+  "description": "按局部语境选择中日韩字体；稳定 DOM 模式、个人词典、可解释识别与开源测试工具。",
+  "permissions": [
+    "storage",
+    "contextMenus"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "CJK Context Font",
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "core.js",
+        "diagnostics.js",
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}
