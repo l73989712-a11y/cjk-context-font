@@ -1,0 +1,25 @@
+name: Test
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install playwright
+      - run: playwright install --with-deps chromium
+      - run: npm run check
+      - run: npm test
+      - run: npm run build
+      - run: npm run test:e2e
+      - run: xvfb-run -a npm run test:extension
+      - run: npm run benchmark
+      - run: npm run release:check
+      - run: npm run package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cjk-context-font-build
+          path: dist/*.zip
