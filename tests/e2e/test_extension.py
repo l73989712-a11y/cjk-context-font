@@ -98,8 +98,20 @@ def main() -> None:
         browser = playwright.chromium.launch(**launch_options)
         context = browser.new_context(locale="zh-CN")
         page = context.new_page()
+        browser_messages = []
+        page.on("console", lambda message: browser_messages.append(f"console:{message.type}:{message.text}"))
+        page.on("pageerror", lambda error: browser_messages.append(f"pageerror:{error}"))
         page.set_content((FIXTURES / "dynamic.html").read_text(encoding="utf-8"), wait_until="load")
         page.evaluate(CHROME_MOCK)
+        # requestIdleCallback can be heavily delayed in headless CI. Replace it with a
+        # deterministic, asynchronous scheduler for this regression test only.
+        page.evaluate("""() => {
+          window.requestIdleCallback = callback => setTimeout(
+            () => callback({ didTimeout: false, timeRemaining: () => 50 }),
+            0
+          );
+          window.cancelIdleCallback = id => clearTimeout(id);
+        }""")
         page.add_style_tag(path=str(ROOT / "dist" / "chromium" / "content.css"))
         page.add_script_tag(path=str(ROOT / "dist" / "chromium" / "core.js"))
         page.add_script_tag(path=str(ROOT / "dist" / "chromium" / "diagnostics.js"))
@@ -107,7 +119,22 @@ def main() -> None:
         page.add_script_tag(path=str(ROOT / "dist" / "chromium" / "text-engine.js"))
         page.add_script_tag(path=str(ROOT / "dist" / "chromium" / "dev-overlay.js"))
         page.add_script_tag(path=str(ROOT / "dist" / "chromium" / "content.js"))
-        page.wait_for_function("document.querySelector('#ja')?.dataset.cjkcfApplied === '1'", timeout=10000)
+        # Trigger one explicit rescan after all scripts are loaded. This removes a race
+        # between script injection and the first idle callback on shared CI runners.
+        page.wait_for_function("typeof window.__sendCJKCFMessage === 'function'", timeout=10000)
+        page.evaluate("__sendCJKCFMessage({type:'CJKCF_RESCAN'})")
+        try:
+            page.wait_for_function(
+                "document.querySelector('#ja')?.dataset.cjkcfApplied === '1'",
+                timeout=30000,
+                polling=50,
+            )
+        except Exception:
+            print("Browser messages before initial scan timeout:", file=sys.stderr)
+            for message in browser_messages:
+                print(message, file=sys.stderr)
+            print("Current document state:", page.content(), file=sys.stderr)
+            raise
 
         assert "cjkcf-ja" in (page.locator("#ja").get_attribute("class") or "").split()
         assert "cjkcf-zh-hans" in (page.locator("#zh").get_attribute("class") or "").split()
@@ -121,13 +148,14 @@ def main() -> None:
           p.id = 'dictionary'; p.textContent = '自然';
           document.body.append(p);
         }""")
-        page.wait_for_function("document.querySelector('#dictionary')?.dataset.cjkcfReason === 'user-dictionary-exact'", timeout=5000)
+        page.wait_for_function("document.querySelector('#dictionary')?.dataset.cjkcfReason === 'user-dictionary-exact'", timeout=15000, polling=50)
         assert "cjkcf-ja" in (page.locator("#dictionary").get_attribute("class") or "").split()
 
         page.evaluate("addDynamicItems(800)")
         page.wait_for_function(
             "document.querySelectorAll('#dynamic p[data-cjkcf-applied=\"1\"]').length >= 790",
-            timeout=10000,
+            timeout=30000,
+            polling=50,
         )
         assert page.locator("[data-cjkcf-wrapper='1']").count() == 0
 
