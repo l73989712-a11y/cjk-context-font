@@ -55,7 +55,7 @@ CHROME_MOCK = r"""
     ]
   };
   const read = (values, defaults) => ({ ...(defaults || {}), ...values });
-  const chromeObject = window.chrome || {};
+  const chromeObject = globalThis.chrome || {};
   chromeObject.runtime = {
     getManifest: () => ({ version: "0.5.0" }),
     onMessage: { addListener: listener => messageListeners.push(listener) },
@@ -72,6 +72,7 @@ CHROME_MOCK = r"""
     },
     onChanged: { addListener: listener => changeListeners.push(listener) }
   };
+  globalThis.chrome = chromeObject;
   window.__sendCJKCFMessage = message => new Promise(resolve => {
     let resolved = false;
     const sendResponse = value => { resolved = true; resolve(value); };
@@ -133,7 +134,8 @@ def main() -> None:
             print("Browser messages before initial scan timeout:", file=sys.stderr)
             for message in browser_messages:
                 print(message, file=sys.stderr)
-            print("Current document state:", page.content(), file=sys.stderr)
+            html = page.content()
+            print("Current document state (first 12000 chars):", html[:12000], file=sys.stderr)
             raise
 
         assert "cjkcf-ja" in (page.locator("#ja").get_attribute("class") or "").split()
