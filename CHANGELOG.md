@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.0
+
+- 增加保守、均衡、积极三档识别策略。
+- 引入标题语境权重，降低宽泛纯汉字词在正文中的误判。
+- 增加中日混合整句的中文上下文保护。
+- 增加文字系统密度、决策差值和识别来源。
+- 增加字体实时预览和结构化误判报告。
+- 扩充黄金语料和识别单元测试。
+- 合并 0.5.0 发布后的 GitHub Actions E2E 修复。
+
 ## 0.5.0
 
 - Introduced modular `src/` source layout and reproducible flat Chromium build.

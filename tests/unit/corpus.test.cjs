@@ -10,7 +10,7 @@ const base = {
   inheritedLanguage: null, inheritedDistance: Infinity,
   locationLanguage: null, siteDefaultLanguage: "auto",
   ambiguousHan: "none", browserLanguage: null,
-  acgTitleHeuristics: true
+  acgTitleHeuristics: true, recognitionMode: "balanced", titleLikelihood: 0
 };
 test("黄金语料保持预期分类", () => {
   const failures = [];

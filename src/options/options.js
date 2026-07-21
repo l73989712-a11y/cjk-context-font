@@ -3,12 +3,14 @@
 const DEFAULTS = {
   enabled: true,
   ambiguousHan: "inherit",
+  recognitionMode: "balanced",
   observeDynamic: true,
   processOpenShadowRoots: false,
   safeDomMode: true,
   segmentMixedText: false,
   acgTitleHeuristics: true,
   applyLangAttribute: false,
+  developerOverlay: false,
   minimumTextLength: 1,
   maximumTextLength: 5000,
   ignoreSelectors:
@@ -41,6 +43,7 @@ const LANGUAGE_NAMES = {
 
 const IDS = Object.keys(DEFAULTS);
 let localState = { siteRules: [], siteConfigs: {}, dictionaryEntries: [] };
+let lastPlaygroundReport = null;
 const Core = globalThis.CJKCFCore;
 
 function setStatus(message) {
@@ -180,27 +183,71 @@ async function addDictionaryEntry() {
   setStatus("已添加词典项。");
 }
 
-function runPlayground() {
+function playgroundContext() {
   const text = document.getElementById("playgroundText").value;
   const host = document.getElementById("playgroundHost").value.trim().toLowerCase();
   const fallback = document.getElementById("playgroundFallback").value;
+  const role = document.getElementById("playgroundRole").value;
   const dictionary = Core.findDictionaryMatch(text, localState.dictionaryEntries, host);
-  const result = Core.classifyText(text, {
-    minimumTextLength: 1,
-    maximumTextLength: 5000,
-    inheritedLanguage: null,
-    inheritedDistance: Infinity,
-    locationLanguage: null,
-    siteDefaultLanguage: "auto",
-    ambiguousHan: fallback,
-    browserLanguage: fallback === "inherit" ? "zh-Hans" : null,
-    acgTitleHeuristics: document.getElementById("acgTitleHeuristics").checked,
-    dictionaryLanguage: dictionary?.language ?? null,
-    dictionaryEvidence: dictionary
-  });
-  document.getElementById("playgroundResult").textContent = result
-    ? JSON.stringify(result, null, 2)
-    : "null（当前规则选择不处理）";
+  return {
+    text,
+    host,
+    context: {
+      minimumTextLength: 1,
+      maximumTextLength: 5000,
+      inheritedLanguage: null,
+      inheritedDistance: Infinity,
+      locationLanguage: null,
+      siteDefaultLanguage: "auto",
+      ambiguousHan: fallback,
+      browserLanguage: fallback === "inherit" ? "zh-Hans" : null,
+      acgTitleHeuristics: document.getElementById("acgTitleHeuristics").checked,
+      recognitionMode: document.getElementById("recognitionMode").value,
+      textRole: role,
+      titleLikelihood: role === "title" ? 1 : role === "body" ? 0 : 0.25,
+      dictionaryLanguage: dictionary?.language ?? null,
+      dictionaryEvidence: dictionary
+    }
+  };
+}
+
+function runPlayground() {
+  const { text, host, context } = playgroundContext();
+  const analysis = Core.analyzeText(text, context);
+  lastPlaygroundReport = {
+    format: "cjk-context-font-misclassification-report",
+    version: 1,
+    extensionVersion: chrome.runtime.getManifest().version,
+    generatedAt: new Date().toISOString(),
+    text,
+    simulatedHost: host,
+    settings: {
+      recognitionMode: context.recognitionMode,
+      fallback: context.ambiguousHan,
+      role: context.textRole,
+      acgTitleHeuristics: context.acgTitleHeuristics
+    },
+    analysis
+  };
+  document.getElementById("playgroundResult").textContent = JSON.stringify(analysis, null, 2);
+  document.getElementById("copyPlaygroundReport").disabled = false;
+}
+
+async function copyPlaygroundReport() {
+  if (!lastPlaygroundReport) runPlayground();
+  try {
+    await navigator.clipboard.writeText(JSON.stringify(lastPlaygroundReport, null, 2));
+    setStatus("已复制误判报告。报告只包含试验台中主动输入的文字。 ");
+  } catch (error) {
+    setStatus(`复制失败：${error.message}`);
+  }
+}
+
+function updateFontPreviews() {
+  for (const preview of document.querySelectorAll("[data-preview-font]")) {
+    const input = document.getElementById(preview.dataset.previewFont);
+    if (input) preview.style.fontFamily = input.value;
+  }
 }
 
 function renderSiteConfigs() {
@@ -251,6 +298,7 @@ async function restore() {
   renderDictionary();
   renderRules();
   renderSiteConfigs();
+  updateFontPreviews();
 }
 
 async function save() {
@@ -265,6 +313,7 @@ async function save() {
 async function reset() {
   await chrome.storage.sync.set(DEFAULTS);
   setForm(DEFAULTS);
+  updateFontPreviews();
   setStatus("已恢复默认识别和字体设置；站点规则未删除。");
 }
 
@@ -330,6 +379,10 @@ ${term}`, {
 
 document.getElementById("addDictionary").addEventListener("click", addDictionaryEntry);
 document.getElementById("runPlayground").addEventListener("click", runPlayground);
+document.getElementById("copyPlaygroundReport").addEventListener("click", copyPlaygroundReport);
+for (const id of ["jaSans", "jaSerif", "zhHansSans", "zhHansSerif", "zhHantSans", "zhHantSerif", "koSans", "koSerif"]) {
+  document.getElementById(id).addEventListener("input", updateFontPreviews);
+}
 document.getElementById("save").addEventListener("click", save);
 document.getElementById("reset").addEventListener("click", reset);
 document.getElementById("exportRules").addEventListener("click", exportRules);

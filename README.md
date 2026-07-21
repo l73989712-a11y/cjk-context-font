@@ -1,30 +1,31 @@
-# CJK Context Font 0.5.0
+# CJK Context Font 0.6.0
 
 按局部语境为中文、日文、繁体中文和韩文选择合适本地字体的 Chromium 扩展。识别完全在浏览器本地完成。
 
-## 0.5.0 工程化版本
+## 0.6.0
 
-本版保持稳定 DOM 模式默认开启，并完成：
-
-- `src/` 源码结构和可重复构建流程；
-- 有界 LRU 识别缓存；
-- Bilibili、YouTube、ChatGPT、Niconico、Wikipedia 的声明式站点适配器框架；
-- 可选开发诊断浮层；
-- 注入式浏览器回归测试与真实“加载未打包扩展”测试；
-- 性能基准脚本；
-- 标签发布时自动生成 GitHub Release 和两个 ZIP。
-
-稳定模式不会拆分或替换网页文本节点，并继续跳过 `ruby`、`rt`、`rp` 和片假名注音脚本生成区域。
+- 新增保守、均衡和积极三档识别策略；
+- 宽泛的纯汉字 ACG 词只在标题语境中显著增加日文分数；
+- 中文句子里只有少量片假名时，不再把整句强制切成日文字体；
+- 识别结果增加文字系统密度、决策差值和来源信息；
+- 设置页增加八组实时字体预览；
+- 识别试验台支持模拟标题/正文语境；
+- 可复制结构化误判报告，方便提交 GitHub Issue；
+- 保持稳定 DOM 模式、ruby 保护和不联网默认值。
 
 ## 安装
 
-普通用户请下载 GitHub Release 中的 `cjk-context-font-0.5.0-chromium.zip`：
+1. 下载 Chromium 安装包并完整解压。
+2. 打开 `chrome://extensions`，启用开发者模式。
+3. 点击“加载未打包的扩展程序”。
+4. 选择直接包含 `manifest.json` 的解压文件夹。
+5. 刷新已有网页。
 
-1. 解压 ZIP。
-2. 打开 `chrome://extensions`。
-3. 启用开发者模式。
-4. 选择“加载已解压的扩展程序”。
-5. 选择解压后直接包含 `manifest.json` 的目录。
+## 识别优先级
+
+临时手动标记 → 元素站点规则 → 个人词典 → 最近的网页 `lang` → 文字系统与语境评分 → 页面/浏览器语言回退。
+
+纯汉字永远可能存在无法确定的情况。扩展的目标不是假装百分之百正确，而是在证据不足时保持克制，并让用户能够方便纠正。
 
 ## 开发
 
@@ -33,51 +34,24 @@ npm run check
 npm test
 npm run build
 npm run test:e2e
+npm run test:extension
 npm run benchmark
 npm run release:check
 npm run package
 ```
 
-完整加载扩展的测试需要有图形环境；Linux CI 使用：
-
-```bash
-xvfb-run -a npm run test:extension
-```
-
-构建结果位于：
-
-```text
-dist/chromium/
-dist/cjk-context-font-0.5.0-chromium.zip
-dist/cjk-context-font-0.5.0-source.zip
-```
-
-## 目录
-
-```text
-src/                 扩展源码
-  background/
-  content/
-  options/
-  popup/
-  styles/
-tests/               单元和浏览器测试
-scripts/             检查、构建、基准和打包
-docs/                架构、识别模型、性能与测试说明
-.github/workflows/    CI 和标签发布
-```
+- 架构：[`docs/architecture.md`](docs/architecture.md)
+- 识别模型：[`docs/detection.md`](docs/detection.md)
+- 性能：[`docs/performance.md`](docs/performance.md)
+- 测试：[`docs/testing.md`](docs/testing.md)
+- 发布：[`docs/releasing.md`](docs/releasing.md)
+- 隐私：[`PRIVACY.md`](PRIVACY.md)
+- 贡献：[`CONTRIBUTING.md`](CONTRIBUTING.md)
+- 安全：[`SECURITY.md`](SECURITY.md)
 
 ## 隐私
 
-扩展不上传网页文字、浏览记录、个人词典或诊断数据。开发诊断浮层只显示数字，并且默认关闭。详见 [PRIVACY.md](PRIVACY.md)。
-
-## 文档
-
-- [架构](docs/architecture.md)
-- [识别模型](docs/detection.md)
-- [性能设计](docs/performance.md)
-- [测试](docs/testing.md)
-- [发布流程](docs/releasing.md)
+扩展不上传网页文本、浏览历史、词典或站点规则，不包含广告、分析或遥测。
 
 ## License
 

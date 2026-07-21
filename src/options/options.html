@@ -19,6 +19,15 @@
       </label>
 
       <label>
+        自动识别策略
+        <select id="recognitionMode">
+          <option value="conservative">保守：宁可不处理，也尽量避免误判</option>
+          <option value="balanced">均衡（推荐）</option>
+          <option value="aggressive">积极：更愿意识别纯汉字标题</option>
+        </select>
+      </label>
+
+      <label>
         纯汉字且无法判断时
         <select id="ambiguousHan">
           <option value="inherit">继承网页或浏览器语言</option>
@@ -92,6 +101,21 @@
     </section>
 
     <section class="card">
+      <h2>字体预览</h2>
+      <p class="hint">输入字体名称时会立即更新。预览只调用系统已经安装的字体。</p>
+      <div class="font-preview-grid">
+        <article class="font-preview-card"><strong>日文 · ゴシック</strong><p lang="ja" data-preview-font="jaSans">東京の空、残酷な天使のテーゼ。</p></article>
+        <article class="font-preview-card"><strong>日文 · 明朝</strong><p lang="ja" data-preview-font="jaSerif">東京の空、残酷な天使のテーゼ。</p></article>
+        <article class="font-preview-card"><strong>简体中文 · 无衬线</strong><p lang="zh-CN" data-preview-font="zhHansSans">正确显示中文汉字的字形与节奏。</p></article>
+        <article class="font-preview-card"><strong>简体中文 · 衬线</strong><p lang="zh-CN" data-preview-font="zhHansSerif">正确显示中文汉字的字形与节奏。</p></article>
+        <article class="font-preview-card"><strong>繁體中文 · 無襯線</strong><p lang="zh-TW" data-preview-font="zhHantSans">正確顯示繁體中文字形與節奏。</p></article>
+        <article class="font-preview-card"><strong>繁體中文 · 襯線</strong><p lang="zh-TW" data-preview-font="zhHantSerif">正確顯示繁體中文字形與節奏。</p></article>
+        <article class="font-preview-card"><strong>한국어 · 고딕</strong><p lang="ko" data-preview-font="koSans">한국어와 漢字의 글꼴 미리보기입니다.</p></article>
+        <article class="font-preview-card"><strong>한국어 · 명조</strong><p lang="ko" data-preview-font="koSerif">한국어와 漢字의 글꼴 미리보기입니다.</p></article>
+      </div>
+    </section>
+
+    <section class="card">
       <div class="section-heading">
         <div>
           <h2>个人词典</h2>
@@ -119,13 +143,20 @@
       <h2>识别试验台</h2>
       <p class="hint">在不修改网页的情况下查看语言、置信度、判定原因和得分。会同时使用上方个人词典。</p>
       <label>测试文本<textarea id="playgroundText" rows="3" placeholder="例如：紅蓮華"></textarea></label>
-      <div class="grid">
+      <div class="grid three-column-grid">
         <label>模拟网站<input id="playgroundHost" type="text" placeholder="可留空"></label>
+        <label>文本语境
+          <select id="playgroundRole"><option value="auto">自动/未知</option><option value="title">标题</option><option value="body">正文或评论</option></select>
+        </label>
         <label>纯汉字回退
           <select id="playgroundFallback"><option value="none">保持不处理</option><option value="inherit">浏览器语言</option><option value="ja">日文</option><option value="zh-Hans">简体中文</option><option value="zh-Hant">繁体中文</option></select>
         </label>
       </div>
-      <button id="runPlayground" class="secondary" type="button">运行识别</button>
+      <div class="compact-actions">
+        <button id="runPlayground" class="secondary" type="button">运行识别</button>
+        <button id="copyPlaygroundReport" class="secondary" type="button" disabled>复制误判报告</button>
+      </div>
+      <p class="hint">误判报告只包含你在试验台主动输入的文本、模拟选项和识别结果，不会读取其他网页内容。</p>
       <pre id="playgroundResult" class="playground-result">尚未运行。</pre>
     </section>
 

@@ -122,10 +122,30 @@
     return null;
   }
 
+  function textRoleForElement(element) {
+    const adapterRole = SiteAdapters.roleFor(element, adapter);
+    if (adapterRole !== "other") return adapterRole;
+    if (element?.closest?.('h1,h2,h3,h4,h5,h6,[role="heading"]')) return "title";
+    const identity = `${element?.id ?? ""} ${element?.className ?? ""}`.toLowerCase();
+    if (/(^|[\s_-])(title|headline|subject|caption)([\s_-]|$)/u.test(identity)) return "title";
+    return "other";
+  }
+
+  function titleLikelihoodForElement(element, text) {
+    const role = textRoleForElement(element);
+    if (role === "title") return 1;
+    if (role === "comment") return 0.05;
+    const length = [...String(text ?? "").trim()].length;
+    if (element?.closest?.("a") && length > 0 && length <= 48) return 0.55;
+    if (length > 0 && length <= 24) return 0.22;
+    return 0;
+  }
+
   function classificationContext(text, parentElement) {
     const inherited = nearestLanguage(parentElement);
     const siteRule = matchingSiteRule(parentElement);
     const dictionary = Core.findDictionaryMatch(text, dictionaryEntries, currentHost());
+    const textRole = textRoleForElement(parentElement);
     return {
       manualLanguage: manualLanguageForElement(parentElement),
       siteRuleLanguage: siteRule?.language ?? null,
@@ -138,6 +158,9 @@
       ambiguousHan: settings.ambiguousHan,
       browserLanguage: browserLanguageFallback(),
       acgTitleHeuristics: settings.acgTitleHeuristics,
+      recognitionMode: settings.recognitionMode,
+      textRole,
+      titleLikelihood: titleLikelihoodForElement(parentElement, text),
       minimumTextLength: settings.minimumTextLength,
       maximumTextLength: settings.maximumTextLength
     };

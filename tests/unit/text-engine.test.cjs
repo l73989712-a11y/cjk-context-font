@@ -7,7 +7,7 @@ test("bounded cache returns stable classifications", () => {
   let revision = 1;
   const engine = TextEngine.create({
     Core,
-    getContext: () => ({ ambiguousHan: "none", acgTitleHeuristics: true, minimumTextLength: 1, maximumTextLength: 5000 }),
+    getContext: () => ({ ambiguousHan: "none", acgTitleHeuristics: true, recognitionMode: "balanced", titleLikelihood: 0, minimumTextLength: 1, maximumTextLength: 5000 }),
     getRevision: () => revision,
     maxCacheEntries: 4
   });

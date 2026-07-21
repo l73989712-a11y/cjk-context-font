@@ -6,7 +6,7 @@ const defaultsMatch = core.match(/const DEFAULTS = Object\.freeze\(\{([\s\S]*?)\
 if (!defaultsMatch) throw new Error("无法读取 DEFAULTS");
 const defaults = defaultsMatch[1];
 for (const expected of [
-  "safeDomMode: true", "segmentMixedText: false", "processOpenShadowRoots: false",
+  "safeDomMode: true", "segmentMixedText: false", "recognitionMode: \"balanced\"", "processOpenShadowRoots: false",
   "applyLangAttribute: false", "developerOverlay: false"
 ]) {
   if (!defaults.includes(expected)) throw new Error(`危险默认值检查失败：${expected}`);

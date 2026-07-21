@@ -40,6 +40,7 @@ CHROME_MOCK = r"""
   const syncValues = {
     enabled: true,
     ambiguousHan: "none",
+    recognitionMode: "balanced",
     observeDynamic: true,
     processOpenShadowRoots: false,
     safeDomMode: true,
@@ -57,7 +58,7 @@ CHROME_MOCK = r"""
   const read = (values, defaults) => ({ ...(defaults || {}), ...values });
   const chromeObject = globalThis.chrome || {};
   chromeObject.runtime = {
-    getManifest: () => ({ version: "0.5.0" }),
+    getManifest: () => ({ version: "0.6.0" }),
     onMessage: { addListener: listener => messageListeners.push(listener) },
     sendMessage: async () => ({ ok: true })
   };

@@ -30,9 +30,19 @@
     "category": "traditional"
   },
   {
+    "text": "这个视频里的ゲーム翻译得很好",
+    "expected": "zh-Hans",
+    "category": "mixed-simplified"
+  },
+  {
+    "text": "這個影片裡的ゲーム翻譯得很好",
+    "expected": "zh-Hant",
+    "category": "mixed-traditional"
+  },
+  {
     "text": "紅蓮華",
     "expected": "ja",
-    "category": "acg"
+    "category": "strong-acg"
   },
   {
     "text": "鬼滅之刃",
@@ -41,8 +51,8 @@
   },
   {
     "text": "進撃",
-    "expected": null,
-    "category": "ambiguous-acg"
+    "expected": "ja",
+    "category": "japanese-title"
   },
   {
     "text": "自然",
@@ -58,6 +68,11 @@
     "text": "少女",
     "expected": null,
     "category": "ambiguous"
+  },
+  {
+    "text": "新世界",
+    "expected": null,
+    "category": "weak-title-without-context"
   },
   {
     "text": "这个标题没有日语假名",

@@ -28,7 +28,9 @@
       context.inheritedLanguage, context.inheritedDistance,
       context.locationLanguage, context.siteDefaultLanguage,
       context.ambiguousHan, context.browserLanguage,
-      context.acgTitleHeuristics, context.minimumTextLength, context.maximumTextLength
+      context.acgTitleHeuristics, context.recognitionMode,
+      context.titleLikelihood, context.textRole,
+      context.minimumTextLength, context.maximumTextLength
     ].map(value => String(value ?? "")).join("\u001f");
   }
 

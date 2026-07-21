@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "CJK Context Font",
-  "version": "0.5.0",
-  "description": "按局部语境选择中日韩字体；稳定 DOM 模式、识别缓存、站点适配器与性能诊断。",
+  "version": "0.6.0",
+  "description": "按语境选择中日韩字体；可解释识别、标题语境评分、实时字体预览与稳定 DOM 模式。",
   "permissions": [
     "storage",
     "contextMenus"
